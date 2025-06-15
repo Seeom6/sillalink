@@ -1,16 +1,18 @@
 "use client"
 
+import { useRouter } from 'next/navigation';
 import { EmployeesTable } from "../components/employees/employeeTable"
 
 export default function EmployeesPage() {
+
+  const route = useRouter()
+
   const handleAddUser = () => {
-    console.log("Add new user")
-    // Implement add user logic
+      route.push("/employees/add-employee")
   }
 
-  const handleEditUser = (employee: any) => {
-    console.log("Edit user:", employee)
-    // Implement edit user logic
+  const handleEditUser = () => {
+
   }
 
   const handleDeleteUser = (employee: any) => {

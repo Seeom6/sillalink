@@ -2,17 +2,29 @@
 
 import { useState, useCallback, useMemo } from "react"
 import { MoreHorizontal, Info, Trash2 } from "lucide-react"
-import { useEmployees } from "@/app/hooks/employee/useEmployee"
-import  { Employee } from "@/app/types/employeeTypes"
+import { useGetEmployees } from "@/app/hooks/employee/useEmployee"
+import { Employee } from "@/app/types/employeeTypes"
 import { EmployeeAvatar } from "./employeeAvatar"
 import { StatusBadge } from "./employeeBadge"
 import { EmptyState } from "./employeeStatus"
 import { TableFilters } from "./tabelFilter"
 import { TablePagination } from "./tablePagination"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/shared/ui/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/shared/ui/table"
 import { Checkbox } from "@/app/shared/ui/checkbox"
 import Button from "@/app/shared/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/shared/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/app/shared/ui/dropdown-menu"
 import { Badge } from "@/app/shared/ui/badge"
 
 interface EmployeesTableProps {
@@ -36,8 +48,8 @@ export const EmployeesTable = ({
   })
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([])
 
-  const { data, isLoading, error } = useEmployees(filters)
-
+  const { data: employees, isLoading, error } = useGetEmployees(filters)
+  console.log(employees)
   const handleSearchChange = useCallback((search: string) => {
     setFilters((prev) => ({ ...prev, search, page: 1 }))
   }, [])
@@ -52,30 +64,38 @@ export const EmployeesTable = ({
 
   const handleSelectAll = useCallback(
     (checked: boolean) => {
-      if (checked && data?.data) {
-        setSelectedEmployees(data.data.map((emp) => emp.id))
+      if (checked && employees) {
+        setSelectedEmployees(employees.data.map((emp: any) => emp.id))
       } else {
         setSelectedEmployees([])
       }
     },
-    [data?.data],
+    [employees],
   )
 
-  const handleSelectEmployee = useCallback((employeeId: string, checked: boolean) => {
-    setSelectedEmployees((prev) => (checked ? [...prev, employeeId] : prev.filter((id) => id !== employeeId)))
-  }, [])
-
-  const totalPages = useMemo(() => {
-    return data ? Math.ceil(data.total / data.limit) : 0
-  }, [data])
+  const handleSelectEmployee = useCallback(
+    (employeeId: string, checked: boolean) => {
+      setSelectedEmployees((prev) =>
+        checked ? [...prev, employeeId] : prev.filter((id) => id !== employeeId)
+      )
+    },
+    [],
+  )
 
   const isAllSelected = useMemo(() => {
-    return data?.data && data.data.length > 0 && selectedEmployees.length === data.data.length
-  }, [selectedEmployees.length, data?.data])
+    return (
+      employees &&
+      employees.data.length > 0 &&
+      selectedEmployees.length === employees.data.length
+    )
+  }, [selectedEmployees.length, employees])
 
   const isIndeterminate = useMemo(() => {
-    return selectedEmployees.length > 0 && selectedEmployees.length < (data?.data.length || 0)
-  }, [selectedEmployees.length, data?.data.length])
+    return (
+      selectedEmployees.length > 0 &&
+      selectedEmployees.length < (employees?.data?.length || 0)
+    )
+  }, [selectedEmployees.length, employees?.data?.length])
 
   if (error) {
     return (
@@ -107,7 +127,7 @@ export const EmployeesTable = ({
             </div>
           ))}
         </div>
-      ) : !data?.data.length ? (
+      ) : !employees?.data?.length ? (
         <EmptyState onAction={onAddUser} />
       ) : (
         <>
@@ -120,9 +140,9 @@ export const EmployeesTable = ({
                       checked={isAllSelected}
                       onCheckedChange={handleSelectAll}
                       ref={(el) => {
-                        // Using HTMLInputElement since checkbox inputs support indeterminate
                         if (el && el.querySelector("input")) {
-                          ; (el.querySelector("input") as HTMLInputElement).indeterminate = isIndeterminate
+                          ;(el.querySelector("input") as HTMLInputElement).indeterminate =
+                            isIndeterminate
                         }
                       }}
                     />
@@ -137,29 +157,45 @@ export const EmployeesTable = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.data.map((employee) => (
+                {employees.data.map((employee: Employee) => (
+                  
                   <TableRow key={employee.id} className="hover:bg-gray-50">
                     <TableCell>
                       <Checkbox
                         checked={selectedEmployees.includes(employee.id)}
-                        onCheckedChange={(checked) => handleSelectEmployee(employee.id, checked as boolean)}
+                        onCheckedChange={(checked) =>
+                          handleSelectEmployee(employee.id, checked as boolean)
+                        }
                       />
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <EmployeeAvatar name={employee.name} avatar={employee.avatar} />
+                        {/* <EmployeeAvatar
+                          name={`${employee?.firstName} ${employee.lastName}`}
+                          avatar={employee?.image}
+                        /> */}
                         <div>
-                          <div className="font-medium text-gray-900">{employee.name}</div>
-                          <div className="text-sm text-gray-500">{employee.username}</div>
+                          {/* <div className="font-medium text-gray-900">
+                            {employee.fistName} {employee.lastName}
+                          </div> */}
+                          <div className="text-sm text-gray-500">
+                            {employee.email}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <StatusBadge status={employee.status} />
+                      <StatusBadge status="Active" /> {/* غيّر حسب البيانات الفعلية */}
                     </TableCell>
                     <TableCell className="text-gray-900">{employee.email}</TableCell>
-                    <TableCell className="text-gray-900 ">                    <Badge className="bg-primary text-gray-100" variant="destructive">{employee.position}</Badge></TableCell>
-                    <TableCell className="text-gray-900">{employee.date}</TableCell>
+                    <TableCell className="text-gray-900">
+                      <Badge className="bg-primary text-gray-100" variant="destructive">
+                        {employee.position}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-gray-900">
+                      {/* {new Date(employee.startDate).toLocaleDateString()} */}
+                    </TableCell>
                     <TableCell>
                       <Button
                         variant="ghost"
@@ -173,7 +209,11 @@ export const EmployeesTable = ({
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-400 hover:text-gray-600"
+                          >
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -182,8 +222,13 @@ export const EmployeesTable = ({
                             <Info className="w-4 h-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onEditUser(employee)}>Edit Employee</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onDeleteUser(employee)} className="text-red-600">
+                          <DropdownMenuItem onClick={() => onEditUser(employee)}>
+                            Edit Employee
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => onDeleteUser(employee)}
+                            className="text-red-600"
+                          >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete
                           </DropdownMenuItem>
@@ -196,7 +241,7 @@ export const EmployeesTable = ({
             </Table>
           </div>
 
-          <TablePagination currentPage={filters.page} totalPages={totalPages} onPageChange={handlePageChange} />
+          <TablePagination currentPage={filters.page} totalPages={4} onPageChange={handlePageChange} />
         </>
       )}
     </div>

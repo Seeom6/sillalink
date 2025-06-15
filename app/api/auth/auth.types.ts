@@ -1,7 +1,10 @@
-// lib/api/auth/auth.types.ts
 export interface LoginPayload {
   email: string;
   password: string;
+}
+
+export interface EmailConfirmResponse {
+  token : string;
 }
 
 export interface LoginResponse {
@@ -15,10 +18,15 @@ export interface LoginResponse {
 }
 
 export interface RegisterPayload {
-  name: string;
+  firstName : string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
+}
+
+export interface Otp {
+  otp : string;
 }
 
 export interface ForgotPasswordPayload {

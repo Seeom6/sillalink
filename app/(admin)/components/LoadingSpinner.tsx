@@ -1,16 +1,17 @@
 // components/LoadingSpinner.tsx
 "use client";
 
-import { motion } from "framer-motion";
+import { ClipLoader } from 'react-spinners';
 
-export const LoadingSpinner = () => {
+interface loading{
+  size : number
+  color : string
+}
+
+const Loading = ({size , color} : loading) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/80 backdrop-blur-sm">
-      <motion.div
-        className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-      />
-    </div>
+    <ClipLoader color={color} size={size} />
   );
 };
+
+export default Loading;

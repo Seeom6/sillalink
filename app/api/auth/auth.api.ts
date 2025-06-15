@@ -6,6 +6,7 @@ import {
   RegisterPayload,
   ForgotPasswordPayload,
   ResetPasswordPayload,
+  EmailConfirmResponse,
   VerifyTokenResponse,
 } from './auth.types';
 
@@ -15,7 +16,19 @@ export const AuthApi = {
   },
 
   register: async (payload: RegisterPayload): Promise<LoginResponse> => {
-    return apiClient.post('/auth/register', payload);
+    return apiClient.post('/website/auth/sign-up', payload);
+  },
+
+  sendOtp: async (payload: ForgotPasswordPayload): Promise<void> => {
+    return apiClient.post('/website/auth/check-email-sing-in', payload);
+  },
+
+  confirmOtp: async (payload: { otp: string}): Promise<void> => {
+    return apiClient.post('/website/auth/verify-otp', payload);
+  },
+
+  confirmEmail: async (payload: ForgotPasswordPayload): Promise<EmailConfirmResponse> => {
+    return apiClient.post('/website/auth/sign-in/check-email-sing-in', payload);
   },
 
   forgotPassword: async (payload: ForgotPasswordPayload) => {

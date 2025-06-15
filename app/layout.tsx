@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Poppins } from 'next/font/google';
 import "./globals.css";
 import Providers from "./api/QeuryProvider";
-import { ToastProvider } from "./shared/Toast/ToastProvider";
-
+import { ToastProvider } from "./contexts/toast-context";
+import { RouteLoader } from "./shared/loaders/RouteLoader";
+import { FullPageLoader } from "./shared/loaders/fullPageLoader";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -71,6 +72,7 @@ export default function RootLayout({
                 })
               }}
             />
+            <FullPageLoader/>
             {children}
           </ToastProvider>
         </Providers>

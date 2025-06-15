@@ -2,11 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LoadingSpinner } from "./components/LoadingSpinner";
 import LeftSidebar from "./components/LeftSidebar";
 import MobileHeader from "./components/MobileHeader";
-// ... other imports
 import { PageTransition } from './components/PageTransition';
+import Loading from "./components/LoadingSpinner";
 
 export default function AdminLayout({
   children,
@@ -28,7 +27,7 @@ export default function AdminLayout({
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {isLoading && <LoadingSpinner />}
+      {isLoading && <Loading  color="#fff"  size={40}/>}
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">

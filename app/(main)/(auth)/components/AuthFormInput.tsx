@@ -11,7 +11,7 @@ interface AuthFormInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 export const AuthFormInput = forwardRef<HTMLInputElement, AuthFormInputProps>(
   ({ label, error, id, ...props }, ref) => {
     return (
-      <div className="space-y-1">
+      <div className="space-y-1 w-full">
         <label htmlFor={id} className="block text-sm font-medium text-gray-700">
           {label}
         </label>

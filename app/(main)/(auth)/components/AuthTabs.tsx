@@ -23,7 +23,7 @@ export const AuthTabs = ({ activeTab, setActiveTab }: AuthTabsProps) => {
           Login
         </Link>
         <Link
-          href={"/signup"}
+          href={"/signup/email-confirm"}
           className={`py-2 px-8 md:px-10 text-small md:text-regular font-semibold transition-all duration-300 ease-in-out ${
             activeTab === "signup"
               ? "text-gray-100 bg-primary rounded-[33px]"

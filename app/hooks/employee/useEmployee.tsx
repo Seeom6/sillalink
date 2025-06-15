@@ -1,7 +1,11 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
-import type { EmployeesResponse, EmployeeFilters } from "@/app/types/employeeTypes"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import type { EmployeesResponse, EmployeeFilters , Employee} from "@/app/types/employeeTypes"
+import { createEmpPayload } from "@/app/api/employee/emp-api-type"
+import { empApi } from "@/app/api/employee/employee.api"
+import { useToast } from "../useToast"
+import HandleError from "@/app/lib/ErrorEradication"
 
 // Mock API function - replace with your actual API call
 const fetchEmployees = async (filters: EmployeeFilters): Promise<EmployeesResponse> => {
@@ -130,11 +134,23 @@ const fetchEmployees = async (filters: EmployeeFilters): Promise<EmployeesRespon
   }
 }
 
-export const useEmployees = (filters: EmployeeFilters) => {
+export const useGetEmployees = (filters: EmployeeFilters) => {
   return useQuery({
     queryKey: ["employees", filters],
-    queryFn: () => fetchEmployees(filters),
+    queryFn: () => empApi.getEmp(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+  })
+}
+
+export const useAddEmployee = ()=>{
+  const toast = useToast()
+  return useMutation({
+    mutationFn: (payload : createEmpPayload)=>empApi.createEmp(payload),
+    onSuccess: (data : any) =>{
+      console.log(data)
+    },onError:(err : any)=>{
+      toast.error("Oh ops!" , HandleError(err))
+    }
   })
 }
